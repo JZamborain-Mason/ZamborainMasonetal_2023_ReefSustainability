@@ -1,5 +1,5 @@
 data {
- real n;// fixed parameter that modifies at which biomass the surplus production peaks (2 is graham-schaefer, 1 is gompertz-fox)
+ real n;// fixed parameter that modifies at which biomass the surplus production peaks 
  int<lower=1> N; //number of reserve data points 
  int<lower=1> RE;//number of remote data points
  real b[N]; //Biomass response variable (y axes) in reserves(log-transformed)
