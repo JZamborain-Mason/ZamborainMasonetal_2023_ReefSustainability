@@ -4,7 +4,7 @@ data {
  int<lower=1> RE;//number of remote data points
  real b[N]; //Biomass response variable (y axes) in reserves(log-transformed)
  real br[RE]; //Biomass response variable (y axes) in remote reefs (log-transformed)
- //explanatory variables (all slopes and standard belt transect)
+ //explanatory variables 
  int<lower=0> ag[N]; //age reserve
  real hc[N]; //predictor hard coral
  real si[N]; //predictor reserve size
