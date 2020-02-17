@@ -14,7 +14,7 @@ parameters {
  real<lower=0> r;//intrinsic growth rate
  real<lower=0> bmin; //biomass at reserve age 0
  real<lower=0> B0; //unfished biomass (carrying capacity)
- real n;//parameter that modifies at which biomass the surplus production peaks (2 is graham-schaefer, 1 is gompertz-fox)
+ real n;//parameter that modifies at which biomass the surplus production peaks 
  }
 transformed parameters {
  real y;//parameter from fletcher to re-parametrize the pella-tomlinson
