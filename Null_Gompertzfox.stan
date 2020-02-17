@@ -20,7 +20,7 @@ transformed parameters {
  vector[RE] mu2;
  //reserve submodel
  for (i in 1:N) {
-  mu[i] = log(B0*exp(log(bmin/B0)*exp(-r*ag[i]))); //from quinn and desiro making F=0 and substituting m for r*B0/e (also found in ttjorbe and tjorbe2017)
+  mu[i] = log(B0*exp(log(bmin/B0)*exp(-r*ag[i]))); //from Quinn and Desiro 1999 and  Tjorbe and Tjorbe 2017)
  }
  //remote submodel
  for (i in 1:RE) {
@@ -64,13 +64,4 @@ generated quantities {
  for (i in 1:RE) {
   predremoteB[i] = B0;
  }
- //surplus production curve along a gradient of biomass
-// for (i in 1:B){
-//  if (Bio[i]<B0) {
-//  sustyield[i]=(-2.718281828)*MMSY*(Bio[i]/B0)*log(Bio[i]/B0); //from Quinn and deriso
-// }
-// else {
-// sustyield[i]=0;
-// }
-// }
 }
