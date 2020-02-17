@@ -24,7 +24,7 @@ model {
  r ~ normal (0.2,1); //weekly informative prior biomass intrinsic growth rate
  sigma_e ~ cauchy(0,1); //uninformative prior sd
  bmin ~ normal (0,200); //weakly informative prior lbiomass at age 0
- B0 ~ normal(120,500);//weakly informative prior for unfished biomass
+ B0 ~ normal(120,500);//changed prior to prove it is informative
  // likelihood
  b~ normal(mu, sigma_e);
  }
