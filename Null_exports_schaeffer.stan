@@ -1,5 +1,5 @@
 data {
- real<lower=0> p; //proportion of net exports
+ real<lower=0> p; //proportion of net exports (set to 0 for main)
  int<lower=1> N; //number of reserve data points 
  int<lower=1> RE;//number of remote data points
  real b[N]; //Biomass response variable (y axes) in reserves(log-transformed)
