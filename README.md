@@ -29,7 +29,7 @@ Install the required packages within R or RStudio and you are set-up to perform 
 # Data and code
 Main R code:
   - `ZamborainMason_ReefSustainability_REVISED.R`: This commented code uses the main datasets and stan models to guide the user from top to bottom to perform the 
-    main paper analyses and figures. It also includes major sensitivity analyses (e.g., choice of surplus production model or catch statistics).
+    main analyses and figures. It also includes major sensitivity analyses (e.g., choice of surplus production model or catch statistics).
     _Note that, given the nature of our models, results may vary slightly from run to run _
   
 Main datasets:
