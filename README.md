@@ -55,10 +55,9 @@ Additional datasets, dependencies or code:
   - `monitorplot_Vehtarietal2019.R`: functions from Vehtari et al 2019* to monitor convergence.Code can be accessed in (https://github.com/avehtari/rhat_ess)
      *Aki Vehtari, Andrew Gelman, Daniel Simpson, Bob Carpenter, Paul-Christian B?rkner (2019): Rank-normalization, folding, and localization: An improved               Rhat for assessing convergence of MCMC. arXiv preprint arXiv:1903.08008.
   - `wormetal2009_californiacurrentsp.csv`: system, genus, and species information from the "California current" system extracted from the supplementary
-     information of  Worm et al. 2009 (https://www.science.org/doi/10.1126/science.1173146) and used for our supplementary analyses. If you use these please cite
-     the paper accordingly. 
+     information of  Worm et al. 2009 (https://www.science.org/doi/10.1126/science.1173146) and used for our supplementary analyses. To access this data refer to
+     the reference.
   - `wormetal2009_spdata.csv`: system, genus, and species information extracted from the supplementary information of  Worm et al. 2009 
-     (https://www.science.org/doi/10.1126/science.1173146) and used for our supplementary analyses. If you use these please cite
-     the paper accordingly. 
+     (https://www.science.org/doi/10.1126/science.1173146) and used for our supplementary analyses. To access this data refer to the reference.
 
 
