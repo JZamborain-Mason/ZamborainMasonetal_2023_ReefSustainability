@@ -30,7 +30,7 @@ Install the required packages within R or RStudio and you are set-up to perform 
 Main R code:
   - `ZamborainMason_ReefSustainability_REVISED.R`: This commented code uses the main datasets and stan models to guide the user from top to bottom to perform the 
     main analyses and figures. It also includes major sensitivity analyses (e.g., choice of surplus production model or catch statistics).
-    _Note that, given the nature of our models, results may vary slightly from run to run _
+    _Note that, given the nature of our models, results may vary slightly from run to run_
   
 Main datasets:
   - `jurisdictionscale_data_revised.csv`: cleaned jurisdiction-level data used in our main analyses.
