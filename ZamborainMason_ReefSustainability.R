@@ -8,11 +8,8 @@
 rm(list=ls())
 
 
-#set working directory (where the data and code of this repository is stored)
+#if downloaded, set working directory (where the data and code of this repository is stored)
 #setwd("")
-#setwd("C:/Users/jzamb/Dropbox/PhD/chapter 1/ALL ANALYSES/FINAL CODE AND DATA/FINAL AFTER REVISIONS (GITHUB)/CODE AFTER REVISIONS 2/CODE AFTER REVISIONS FROM SCIENCE/REVISITIONS AFTER NATURE ROUND 2")
-setwd("C:/Users/jez297/Dropbox/PhD/chapter 1/Manuscript/NATURE COMMUNICATIONS/REVIEW/ZamborainMason_Data and Code_REVISED")
-
 
 #load required libraries
 library(ggrepel)  #Kamil Slowikowski (2018). ggrepel: Automatically Position Non-Overlapping Text Labels with 'ggplot2'. R package version 0.8.0. https://CRAN.R-project.org/package=ggrepel
@@ -41,7 +38,7 @@ library(geoR)#Paulo J. Ribeiro Jr and Peter J. Diggle (2018). geoR: Analysis of 
 library(DHARMa)#Florian Hartig (2019). DHARMa: Residual Diagnostics for Hierarchical (Multi-Level / Mixed) Regression Models. R package version 0.2.4. https://CRAN.R-project.org/package=DHARMa
 library(brms)# Paul-Christian B?rkner (2017). brms: An R Package for Bayesian Multilevel Models Using Stan. Journal of StatisticalSoftware, 80(1), 1-28. doi:10.18637/jss.v080.i01
 library(ggeffects)#L?decke D (2018). "ggeffects: Tidy Data Frames of Marginal Effects from Regression Models." _Journal of Open SourceSoftware_, *3*(26), 772. doi: 10.21105/joss.00772 (URL: http://doi.org/10.21105/joss.00772).
-library (loo)#Vehtari A, Gabry J, Magnusson M, Yao Y, Bürkner P, Paananen T, Gelman A (2022). “loo: Efficient leave-one-out cross-validation and WAIC for Bayesian models.” R package version 2.5.1, <https://mc-stan.org/loo/>.
+library(loo)#Vehtari A, Gabry J, Magnusson M, Yao Y, Bürkner P, Paananen T, Gelman A (2022). “loo: Efficient leave-one-out cross-validation and WAIC for Bayesian models.” R package version 2.5.1, <https://mc-stan.org/loo/>.
 
 #to run chains in parallel
 rstan_options(auto_write = T)
@@ -50,12 +47,13 @@ options(mc.cores = parallel::detectCores())
 #options(backup_options)
 
 #upload data (data is available in the paper's supplementary information)
-reefscale_data<- read.csv("reefscale_data_revised.csv", head=T)
-jurisdictionscale_data<- read.csv("jurisdictionscale_data_revised.csv", head=T)
+reefscale_data<- read.csv("data/reefscale_data_revised.csv", head=T)
+jurisdictionscale_data<- read.csv("data/jurisdictionscale_data_revised.csv", head=T)
 jurisdictionscale_data2<-jurisdictionscale_data
 
 
-#functions used in this script.........................................................................................................
+################################################################################
+#functions used in this script
 
 #mean center covariates: standardise (Following Gelman and Hill 2007)
 standardise <- function(x){(x-mean(x, na.rm=T))/(2*sd(x, na.rm=T))} 
@@ -109,13 +107,13 @@ pMiss <- function(x){sum(is.na(x))/length(x)*100}
 source('monitornew_Vehtarietal2019.R')
 source('monitorplot_Vehtarietal2019.R')
 
+################################################################################
 #number of sites sampled per jurisidiction
 sites<- ddply(reefscale_data,.(Larger),summarize, reefsites=length(UniqueSite)) #bonaire is separated from neteherlands antilles but for reef area and catch it is the same
 reefscale_data$Larger<- as.factor(ifelse(reefscale_data$Larger=="Bonaire","Netherlands Antilles", as.character(reefscale_data$Larger)))
 sites<- ddply(reefscale_data,.(Larger),summarize, reefsites=length(UniqueSite)) 
 
-#######################################################################################################################################
-#clean reefscale and jurisdiction scale data for analyses..............................................................................
+#clean reef-scale and jurisdiction scale data for analyses.......................
 #standardize and relevel categorical variables
 reefscale_data$indexr<- ifelse(reefscale_data$Region=="C",1,ifelse(reefscale_data$Region=="I",2,3))
 reefscale_data$Region<- as.factor(reefscale_data$Region)
@@ -223,11 +221,9 @@ pairs(~ sDepth+
 pairs(~ sDepth+ ReefHabitat+
         sSampArea+
         SampMethod+sOcean_prod+Atoll+sHardCoral2+sSST+sgravtot,data=fished_data,lower.panel=panel.cor)
-
-
 ggplot(rbind(reserves_complete,remote_complete),aes(x=as.factor(Atoll),y=sOcean_prod))+geom_boxplot()
 
-#index for random effects 
+#create index for random effects 
 fished_data$indexj<- as.numeric(factor(fished_data$Larger))
 remote_complete$indexj<- as.numeric(factor(remote_complete$Larger))
 reserves_complete$indexj<- as.numeric(factor(reserves_complete$Larger))
@@ -277,8 +273,8 @@ windows()
 envfig<-ggarrange(a,b,c,d, nrow=1,ncol=4,widths = c(1,1,1,1),labels=c("b","c","d","e"))
 ggarrange(mapsites,envfig,nrow=2,ncol=1,labels=c("a",""))
 
-#######################################################################################################################################
-## Run reference point and status model  ..............................................................................................
+#################################################################################
+## Run reference point and status model  .......................................
 
 #data
 stanDat_full_country<- list(b = log(reserves_complete$FamBiomass_tkm2),ag=reserves_complete$Closure.age,
@@ -302,12 +298,12 @@ stanDat_full_country<- list(b = log(reserves_complete$FamBiomass_tkm2),ag=reserv
                             Bio=Bio, B=B)
 
 #null model
-Fit_null_gf<- stan(file = "Null_gomperztfox_grav.stan", data = stanDat_full_country, chains = 4,control = list(adapt_delta = 0.999))
+Fit_null_gf<- stan(file = "models/Null_gomperztfox_grav.stan", data = stanDat_full_country, chains = 4,control = list(adapt_delta = 0.999))
 windows()
 pairs(Fit_null_gf,pars=c("r","B0","bmin"))
 
 #full model
-Fit_full_gf<- stan(file = "Full_gompertzfox_grav.stan", data = stanDat_full_country, chains = 4,control = list(adapt_delta = 0.999))
+Fit_full_gf<- stan(file = "models/Full_gompertzfox_grav.stan", data = stanDat_full_country, chains = 4,control = list(adapt_delta = 0.999))
 #save(Fit_full_gf,file="Fit_full_inreview.RData")
 windows()
 pairs(Fit_full_gf,pars=c("log_r","B0","log_bmin"))
@@ -369,7 +365,6 @@ modeldiagplot2<- ggplot(mon_full_all_open, aes(x=Rhat))+geom_histogram()+xlab("R
 modeldiagplot3<- ggplot(mon_full_all_open, aes(x=Tail_ESS))+geom_histogram()+xlab("Tail effective sample sizes")+theme_classic()+geom_vline(xintercept =400,lty=2)+geom_text(aes(x=410,y=2000),label="400")
 diagnostics<- ggarrange(modeldiagplot1,modeldiagplot2, modeldiagplot3,nrow=1,ncol=3, labels=c("a","b","c"), widths = c(1.5,1,1))
 
-
 #posterior vs prior
 BO_prior<- exp(rnorm(4000, log(120),1))
 bmin_prior<- exp(rnorm(4000, log(10),1))
@@ -377,7 +372,6 @@ r_prior<- exp(rnorm(4000, -2,1))
 beta_prior<- rnorm(4000, 0,2)
 MMSY_prior<- BO_prior*r_prior/2.718281828
 BMMSY_prior<- BO_prior/2.718281828
-
 c<- ggplot(NULL)+geom_histogram(aes(x=list_of_draws_full$B0),fill="black",col="black")+geom_histogram(aes(x=BO_prior), lwd=2, fill="grey",alpha=0.5)+theme_classic()+ xlab("Unfished Biomass")
 d<- ggplot(NULL)+geom_histogram(aes(x=list_of_draws_full$bmin),fill="black",col="black")+geom_histogram(aes(x=bmin_prior), lwd=2, fill="grey",alpha=0.5)+theme_classic()+ xlab("Biomass reserve age 0")+ylab("")
 e<- ggplot(NULL)+geom_histogram(aes(x=list_of_draws_full$r ),fill="black",col="black")+geom_histogram(aes(x=r_prior), lwd=2, fill="grey",alpha=0.5)+theme_classic()+ xlab("community growth rate")+ylab("")
@@ -432,7 +426,7 @@ ppcheckfig<- ggarrange(a,b,c,nrow=1,ncol=3, widths=c(1,1,1.2),labels=c("l","m","
 windows()
 ggarrange(diagnostics,postprior,resid_fig,ppcheckfig,nrow=4,ncol=1)
 
-## Reference point posteriors .........................................................................................................
+## Reference point posteriors ..................................................
 #effect sizes from covariates
 betas<- output_Fit_full_gf[1:13,c("50%","10%","90%")]
 betas$variable<- c("Ocean productivity", "SST", "Hard coral","Atoll","Crest", "Flat", "Backreef/lagoon","Point count","Sampling area","Reserve size", "Distance sampling","Depth","Gravity")
@@ -713,8 +707,8 @@ ggplot()+geom_density(aes(x=list_of_draws_full$log_bmin),fill="darkred",alpha=0.
   geom_density(aes(x=log(fished_data$FamBiomass_tkm2[fished_data$definedprotection=="Openly fished"])),fill="grey",alpha=0.5)+theme_classic()+xlab ("log-Biomass (t/km2))")+
   geom_text(aes(x=4,y=0.75),label="Bmin",col="darkred")+geom_text(aes(x=6,y=0.4),label="Openly fished sites",col="grey")+ylab("Density")
 
-#######################################################################################################################################
-#Reference points per jurisdiction and status of fished reefs .........................................................................
+#################################################################################
+#Reference points per jurisdiction and status of fished reefs ...................
 
 #extract model posterior
 everything<- rstan::extract(Fit_full_gf)
@@ -910,9 +904,6 @@ ord <- with(extracteddata, reorder(definedprotection, site_status, median, order
 extracteddata<- within(extracteddata, 
                        definedprotection <- factor(definedprotection, 
                                                    levels=levels(ord)))
-
-
-
 #categorize
 extracteddata$belowBMMSY<-ifelse(extracteddata$site_status<1,"belowBMMSY","Not belowBMMSY")
 extracteddata$aboveMMSY<-ifelse(extracteddata$site_catchstatusMMSY>1,"aboveMMSY","Not aboveBMMSY")
@@ -1526,7 +1517,7 @@ windows()
 ggarrange(prob_aboveMMSY_fig,prob_belowBMMSY_fig_all,kobe,nrow=1,ncol=3,labels=c("a","","d"))
 
 
-#######################################################################################################################################
+#################################################################################
 
 #high gravity locations have difefrent environmental conditions an dthus B0 (ongoing human induced environmental change?)
 f<- ggplot(ordereddata,aes(x=sgravtot,y=site_BMMSY))+geom_point(pch=21,fill="grey",alpha=0.1)+geom_smooth(col="black",method="gam")+xlab("log(Total gravity+1)")+ylab("Site-specific BMMSY (t/km2)")+theme(text = element_text(family="Helvetica"),panel.background = element_rect(fill="white",color="black"))+ labs(y =  expression ("Site-specific "*B["MMSY "]*"("~t/km^2*")"))+xlim(c(0,11))
@@ -1534,7 +1525,7 @@ g<- ggplot(ordereddata,aes(x=sgravtot,y=site_MMSY))+geom_point(pch=21,fill="grey
 windows()
 ggarrange(f,g,nrow=1,ncol=2,labels=c("a","b"))
 
-#######################################################################################################################################
+#################################################################################
 #relation between biomass and fishing status
 fisheddata2<- merge(extracteddata,jurisdictionscale_data2, by="Larger", all.x=T)
 
@@ -1576,14 +1567,14 @@ kobe_notext2<- ggplot(jurisdictionscale_data3, aes(x=ifelse(larger_Bstatus_B0>3,
 windows()
 ggarrange(site_kobe2,kobe_notext2, widths = c(1,2))
 
-#######################################################################################################################################
-#Trade-offs between production and other ecosystem metrics ............................................................................
+#################################################################################
+#Trade-offs between production and other ecosystem metrics .....................
 #only fished ddata
 alldata<- extracteddata
 alldata<- droplevels(alldata)
 
 #Tranform (if neccesary) ecosystem metrics and run bayesian hierarchical models using the same covariates as we used for fished biomass 
-#Mean fish length .....................................................................................................................
+#Mean fish length ...............................................................
 hist(log(alldata$meanSize_cm))
 alldata$lSize<- log(alldata$meanSize_cm)
 
@@ -1631,7 +1622,7 @@ alldata$Size_marg_meth<- alldata$meanSize_cm/exp((fixef(model_Size)["sSampArea",
                                                     ifelse(alldata$SampMethod=="Distance sampling",fixef(model_Size)[c("SampMethodDistancesampling")],
                                                            ifelse(alldata$SampMethod=="Point intercept",fixef(model_Size)[c("SampMethodPointintercept")],0))))
 
-#Probability of observing top predators ...............................................................................................
+#Probability of observing top predators ........................................
 hist(log(alldata$TPBiomass_tkm2+1))
 length(alldata$TPBiomass_tkm2[alldata$TPBiomass_tkm2==0])/length(alldata$TPBiomass_tkm2)
 length(alldata$TPBiomass_tkm2[!is.na(alldata$TPBiomass_tkm2)])
@@ -1689,7 +1680,7 @@ alldata$PA_tpmarg<- ifelse(alldata$prob_tpmarg>0.5,1,0)
 alldata$prob_tpmarg_meth<- exp(alldata$tp_marg_meth)/(1+exp(alldata$tp_marg_meth))
 alldata$PA_tpmarg_meth<- ifelse(alldata$prob_tpmarg_meth>0.5,1,0)
 
-#Total fish species richness ..........................................................................................................
+#Total fish species richness ...................................................
 hist(log(alldata$total_sp))
 alldata$ltotalsp<- log(alldata$total_sp)
 length(alldata$total_sp[!is.na(alldata$total_sp)])
@@ -1738,7 +1729,7 @@ alldata$totalsp_marg_meth<- alldata$total_sp/exp((fixef(model_totalsp)["sSampAre
                                                            ifelse(alldata$SampMethod=="Point intercept",fixef(model_totalsp)[c("SampMethodPointintercept")],0))))
 
 
-#Parrotfish scapring potential .........................................................................................................
+#Parrotfish scapring potential .................................................
 length(alldata$scraping_potential[!is.na(alldata$scraping_potential)])
 model_herb<- brm(scraping_potential~ 
                    sDepth+sOcean_prod+Atoll+sSST+
@@ -1806,8 +1797,7 @@ pairs(~log(herb_marg+1)+PA_tpmarg+
          richness)", "Mean length"),cex.labels=1.5,font.labels=2,diag.panel =panel.hist, hist.col="grey" )
 
 
-#Trade-offs ...........................................................................................................................
-
+#Trade-offs ....................................................................
 #with surplus production at most common and average environmental conditions
 #median conditions
 MMSY_median<- median(rstan::extract(Fit_full_gf, pars="MMSY")$MMSY)
@@ -2053,7 +2043,7 @@ SBO<- size_pred$fit[size_pred$Biomass>B0_median][1]
 (100-(SPGY_l*100)/SBO)-(100-((SBMSY*100)/SBO))
 (100-(SBMSY*100)/SBO)-(100-(SPGY*100)/SBO)
 
-#Probability of observing top predators .................. ............................................................................
+#Probability of observing top predators .................. .....................
 gam_tp<- gam(PA_tpmarg~s(lB_marg,k=3),data=alldata)
 plot(fitted(gam_tp), resid(gam_tp))  
 tp_pred<- as.data.frame(predict(gam_tp,newdata=list(lB_marg= sort(alldata$lB_marg)),se.fit=2))
@@ -2074,7 +2064,7 @@ pPGY_l<- tp_pred$fit[tp_pred$Biomass>B_pgy_l][1]
 (100-(pBMSY*100)/pBO)-(100-(pPGY*100)/pBO)
 
 
-#Total fish species richness .............................. ............................................................................
+#Total fish species richness .............................. .....................
 gam_tr<- gam(log(totalsp_marg)~s(lB_marg,k=3),data=alldata)
 hist(resid(gam_tr))  
 tr_pred<- as.data.frame(predict(gam_tr,newdata=list(lB_marg= sort(alldata$lB_marg)),se.fit=2))
@@ -2093,7 +2083,7 @@ rcurrentB<- tr_pred$fit[tr_pred$Biomass>currentB][1]
 (100-(rPGY_l*100)/rBO)-(100-((rBMSY*100)/rBO))
 (100-(rBMSY*100)/rBO)-(100-(rPGY*100)/rBO)
 
-#Parrotfish scraping potential ............................ ............................................................................
+#Parrotfish scraping potential ............................ ....................
 gam_her<- gam(log(herb_marg+1)~s(lB_marg,k=3),data=alldata)
 hist(resid(gam_her))  
 her_pred<- as.data.frame(predict(gam_her,newdata=list(lB_marg= sort(alldata$lB_marg)),se.fit=2))
@@ -2164,10 +2154,9 @@ d<-ggplot(alldata)+geom_jitter(aes(x=herb_marg_meth,y=site_status_cat,fill=as.fa
 ggarrange(a,b,c,d,nrow=1,ncol=4,widths=c(1.3,1,1,1),labels=c("f","g","h","i"))
 
 
-#######################################################################################################################################
-
+################################################################################
 #if we did not include remote: parameters dependent on priors (i.e., not enough infor in only reserve recovery to on the later part of curve)
-Fit_full_gf_nre<- stan(file = "Full_gompertzfox_noremote_grav.stan", data = stanDat_full_country, chains = 4,control = list(adapt_delta = 0.999))
+Fit_full_gf_nre<- stan(file = "models/Full_gompertzfox_noremote_grav.stan", data = stanDat_full_country, chains = 4,control = list(adapt_delta = 0.999))
 ggarrange(plot(Fit_full_gf,pars="log_B0")+xlim(c(4,6)),plot(Fit_full_gf_nre,pars="log_B0")+xlim(c(4,6)),ncol=1,nrow=2)
 exp(median(rstan::extract(Fit_full_gf_nre,pars=c("log_B0"))$log_B0))
 exp(median(rstan::extract(Fit_full_gf,pars=c("log_B0"))$log_B0))
@@ -2177,17 +2166,13 @@ contraction_full_nre<-as.data.frame(cbind(round(c((var_prior_logB0-(sd(rstan::ex
 colnames( contraction_full_nre)<-c("posterior contraction","parameter")
 print(contraction_full_nre)
 
-
-#######################################################################################################################################
-
+#################################################################################
 #model without gravity and with exports parametrized in different ways
-
-Fit_full_exp<- stan(file = "Full_gompertzfox_exportrate.stan", data = stanDat_full_country,iter=10000,warmup = 9000, chains = 4,control = list(adapt_delta = 0.9999))
-Fit_full_exppropr<- stan(file = "Full_gompertzfox_dig.stan", data = stanDat_full_country, chains = 4,control = list(adapt_delta = 0.999))
+Fit_full_exp<- stan(file = "models/Full_gompertzfox_exportrate.stan", data = stanDat_full_country,iter=10000,warmup = 9000, chains = 4,control = list(adapt_delta = 0.9999))
+Fit_full_exppropr<- stan(file = "models/Full_gompertzfox_dig.stan", data = stanDat_full_country, chains = 4,control = list(adapt_delta = 0.999))
 
 #check divergences
 check_divergences(Fit_full_exp)
-
 
 #compare against the version trying to estimate export rate (but not identifiable)
 full_exp_loglik<- extract_log_lik(Fit_full_exp, merge_chains = F)
@@ -2202,19 +2187,19 @@ print(comp2, simplify=F)
 
 #as another step, we test different fixed percentages of density-independent growth exported: (0%, 5%,10%,15%,20%,25%,30%)
 stanDat_full_country$p<-0
-Fit_full_exppropddr_0<- stan(file = "Full_gompertzfox_dig_fixed.stan", data = stanDat_full_country, chains = 4,control = list(adapt_delta = 0.999))
+Fit_full_exppropddr_0<- stan(file = "models/Full_gompertzfox_dig_fixed.stan", data = stanDat_full_country, chains = 4,control = list(adapt_delta = 0.999))
 stanDat_full_country$p<-0.05
-Fit_full_exppropddr_5<- stan(file = "Full_gompertzfox_dig_fixed.stan", data = stanDat_full_country, chains = 4,control = list(adapt_delta = 0.999))
+Fit_full_exppropddr_5<- stan(file = "models/Full_gompertzfox_dig_fixed.stan", data = stanDat_full_country, chains = 4,control = list(adapt_delta = 0.999))
 stanDat_full_country$p<-0.10
-Fit_full_exppropddr_10<- stan(file = "Full_gompertzfox_dig_fixed.stan", data = stanDat_full_country, chains = 4,control = list(adapt_delta = 0.999))
+Fit_full_exppropddr_10<- stan(file = "models/Full_gompertzfox_dig_fixed.stan", data = stanDat_full_country, chains = 4,control = list(adapt_delta = 0.999))
 stanDat_full_country$p<-0.15
-Fit_full_exppropddr_15<- stan(file = "Full_gompertzfox_dig_fixed.stan", data = stanDat_full_country, chains = 4,control = list(adapt_delta = 0.999))
+Fit_full_exppropddr_15<- stan(file = "models/Full_gompertzfox_dig_fixed.stan", data = stanDat_full_country, chains = 4,control = list(adapt_delta = 0.999))
 stanDat_full_country$p<-0.20
-Fit_full_exppropddr_20<- stan(file = "Full_gompertzfox_dig_fixed.stan", data = stanDat_full_country, chains = 4,control = list(adapt_delta = 0.999))
+Fit_full_exppropddr_20<- stan(file = "models/Full_gompertzfox_dig_fixed.stan", data = stanDat_full_country, chains = 4,control = list(adapt_delta = 0.999))
 stanDat_full_country$p<-0.25
-Fit_full_exppropddr_25<- stan(file = "Full_gompertzfox_dig_fixed.stan", data = stanDat_full_country, chains = 4,control = list(adapt_delta = 0.999))
+Fit_full_exppropddr_25<- stan(file = "models/Full_gompertzfox_dig_fixed.stan", data = stanDat_full_country, chains = 4,control = list(adapt_delta = 0.999))
 stanDat_full_country$p<-0.30
-Fit_full_exppropddr_30<- stan(file = "Full_gompertzfox_dig_fixed.stan", data = stanDat_full_country, chains = 4,control = list(adapt_delta = 0.999))
+Fit_full_exppropddr_30<- stan(file = "models/Full_gompertzfox_dig_fixed.stan", data = stanDat_full_country, chains = 4,control = list(adapt_delta = 0.999))
 
 full_exppropddr0_loglik<- extract_log_lik(Fit_full_exppropddr_0, merge_chains = F)
 r_eff_full_exppropddr0 <- relative_eff(exp(full_exppropddr0_loglik)) 
@@ -2251,7 +2236,7 @@ print(comp3, simplify=F)
 #Choice of surplus production model
 
 #originally we seeked to fit the generalized pella-tomlinson model
-Fit_full_pt<- stan(file = "Full_pellatomlinson_free_grav.stan", data = stanDat_full_country, chains = 4,control = list(adapt_delta = 0.9))
+Fit_full_pt<- stan(file = "models/Full_pellatomlinson_free_grav.stan", data = stanDat_full_country, chains = 4,control = list(adapt_delta = 0.9))
 #pella tomllinson  with an additional parameter that defines where the surplus curve peaks (not enough info to estimate it)
 #I always get divergences
 #so I fit special cases of the pella-tomlinson
@@ -2261,17 +2246,17 @@ median(rstan::extract(Fit_full_gf,pars=c("MMSY"))$MMSY)
 median(rstan::extract(Fit_full_gf,pars=c("BMMSY"))$BMMSY)
 
 #graham scahefer
-Fit_full_gs<- stan(file = "Full_schaefer_grav.stan", data = stanDat_full_country, chains = 4,control = list(adapt_delta = 0.999))
+Fit_full_gs<- stan(file = "models/Full_schaefer_grav.stan", data = stanDat_full_country, chains = 4,control = list(adapt_delta = 0.999))
 median(rstan::extract(Fit_full_gs,pars=c("MMSY"))$MMSY)
 median(rstan::extract(Fit_full_gs,pars=c("BMMSY"))$BMMSY)
 
 stanDat_full_country$pe<-3
-Fit_full_pt3<- stan(file = "Full_pellatomlinson_fixed_grav.stan", data = stanDat_full_country, chains = 4,control = list(adapt_delta = 0.99))
+Fit_full_pt3<- stan(file = "models/Full_pellatomlinson_fixed_grav.stan", data = stanDat_full_country, chains = 4,control = list(adapt_delta = 0.99))
 median(rstan::extract(Fit_full_pt3,pars=c("MMSY"))$MMSY)
 median(rstan::extract(Fit_full_pt3,pars=c("BMMSY"))$BMMSY)
 
 stanDat_full_country$pe<-4
-Fit_full_pt4<- stan(file = "Full_pellatomlinson_fixed_grav.stan", data = stanDat_full_country,chains = 4,control = list(adapt_delta = 0.99))
+Fit_full_pt4<- stan(file = "models/Full_pellatomlinson_fixed_grav.stan", data = stanDat_full_country,chains = 4,control = list(adapt_delta = 0.99))
 median(rstan::extract(Fit_full_pt4,pars=c("MMSY"))$MMSY)
 median(rstan::extract(Fit_full_pt4,pars=c("BMMSY"))$BMMSY)
 
@@ -2688,7 +2673,6 @@ jurisdictionscale_data_pt4$concervationconcern<-ifelse(is.na(jurisdictionscale_d
 length(jurisdictionscale_data_pt4$concervationconcern[!is.na(jurisdictionscale_data_pt4$concervationconcern)&jurisdictionscale_data_pt4$concervationconcern=="Conservation concern"])/length(jurisdictionscale_data_pt4$concervationconcern[!is.na(jurisdictionscale_data_pt4$concervationconcern)])
 
 #example of surplus production comparison
-
 popgrowth_gf<-rstan::extract(Fit_full_gf,pars=c("sustyield"))[[1]]
 popgrowth_gf[is.nan(popgrowth_gf)] <- 0
 popgrowth_gf<-broom.mixed::tidyMCMC(coda::as.mcmc(popgrowth_gf),estimate.method = "median",conf.int=T, conf.level=c(0.9),conf.method='quantile')
@@ -2712,7 +2696,7 @@ ggplot(NULL)+geom_line(aes(y=popgrowth_gf$median[!is.na(popgrowth_gf$median)], x
   geom_text(aes(x=150,y=10),label="Graham-Schaefer",col="black")+
   geom_text(aes(x=130,y=15),label="Gompertz-Fox",col="navyblue")
 
-#######################################################################################################################################
+################################################################################
 #results with alternate catch statistics
 catchdataoptions=jurisdictionscale_data2[,c("mean_tonnes",
                                             "mean_tonnes_reported",
@@ -2764,6 +2748,5 @@ row.names(catch_status_sensitivity)=c("n_fishingstatus","perc_catching>MMSY","n_
 #write.csv(catch_status_sensitivity,"sensitivity_catchdata.csv")
 
 
-#######################################################################################################################################
-#load(file='ZamborainMasonetal_2022_ReefSustainability_revised.RData')
+################################################################################
 #save.image(file='ZamborainMasonetal_2022_ReefSustainability_revised.RData')
