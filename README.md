@@ -28,13 +28,13 @@ Install the required packages within R or RStudio and you are set-up to perform 
 
 # Data and code
 Main R code:
-  - `ZamborainMason_ReefSustainability_REVISED.R`: This commented code uses the main datasets and stan models to guide the user from top to bottom to perform the 
+  - `ZamborainMason_ReefSustainability.R`: This commented code uses the main datasets and stan models to guide the user from top to bottom to perform the 
     main analyses and figures. It also includes major sensitivity analyses (e.g., choice of surplus production model or catch statistics).
     _Note that, given the nature of our models, results may vary slightly from run to run_
   
 Main datasets:
-  - `jurisdictionscale_data_revised.csv`: cleaned jurisdiction-level data used in our main analyses.
-  - `reefscale_data_revised.csv`: cleaned reef site data used in our main analyses.
+  - `jurisdictionscale_data.csv`: cleaned jurisdiction-level data used in our main analyses.
+  - `reefscale_data.csv`: cleaned reef site data used in our main analyses.
 
 Stan models: 
   - `Null_gomperztfox_grav.stan`: Null reference point model.
@@ -48,9 +48,9 @@ Stan models:
   - `Full_pellatomlinson_fixed_grav.stan`: reference point model under a pella-tomlinson surplus production fixing parameter value (sensitivity analysis).
 
 Additional datasets, dependencies or code: 
-  - `individualspscale_data_submitted.csv`: species-abundance SERF data used in our supplementary analyses.
-  -  `ZamborainMason_ReefSustainability_sp_specific_RESVISED.R`: code to perform species-specific sensitivity analyses.
-  - `ZamborainMason_ReefSustainability_workflow_REVISED.R`: code to perform bayesian workflow.
+  - `individualspscale_data.csv`: species-abundance SERF data used in our supplementary analyses.
+  -  `ZamborainMason_ReefSustainability_sp_specific.R`: code to perform species-specific sensitivity analyses.
+  - `ZamborainMason_ReefSustainability_workflow.R`: code to perform bayesian workflow.
   - `monitornew_Vehtarietal2019.R`: functions from Vehtari et al 2019* to monitor convergence.Code can be accessed in https://github.com/avehtari/rhat_ess
   - `monitorplot_Vehtarietal2019.R`: functions from Vehtari et al 2019* to monitor convergence.Code can be accessed in (https://github.com/avehtari/rhat_ess)
      *Aki Vehtari, Andrew Gelman, Daniel Simpson, Bob Carpenter, Paul-Christian B?rkner (2019): Rank-normalization, folding, and localization: An improved               Rhat for assessing convergence of MCMC. arXiv preprint arXiv:1903.08008.
