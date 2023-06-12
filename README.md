@@ -9,7 +9,7 @@ Methods are detailed in the manuscript and supplementary material.
 If you use this data or code please cite the paper accordingly. 
 
 # System requirements
-All analyses were implemented in R (R version 4.2.1 (2022-06-23)). For the main analyses we used the RSTAN package. To account for methodological effects in our ecosystem response variables we used the brms package. Additional packages were used to re-arrange the data, perform sensitivity analyses, check model fit and visualization. Specific packages used can be found in code files (i.e.,  `ZamborainMason_ReefSustainability_REVISED.R`, `ZamborainMason_ReefSustainability_sp_specific_RESVISED.R`, and `ZamborainMason_ReefSustainability_workflow_REVISED.R`).
+All analyses were implemented in R (R version 4.2.1 (2022-06-23)). For the main analyses we used the RSTAN package. To account for methodological effects in our ecosystem response variables we used the brms package. Additional packages were used to re-arrange the data, perform sensitivity analyses, check model fit and visualization. Specific packages used can be found in code files (i.e.,  `ZamborainMason_ReefSustainability.R`, `ZamborainMason_ReefSustainability_sp_specific.R`, and `ZamborainMason_ReefSustainability_workflow.R`).
 
 # Installation guide
 If you haven't already, start by downloading R and RStudio on your computer. 
@@ -54,11 +54,11 @@ Additional datasets, dependencies or code:
   - `monitornew_Vehtarietal2019.R`: functions from Vehtari et al 2019* to monitor convergence.Code can be accessed in https://github.com/avehtari/rhat_ess
   - `monitorplot_Vehtarietal2019.R`: functions from Vehtari et al 2019* to monitor convergence.Code can be accessed in (https://github.com/avehtari/rhat_ess)
      *Aki Vehtari, Andrew Gelman, Daniel Simpson, Bob Carpenter, Paul-Christian B?rkner (2019): Rank-normalization, folding, and localization: An improved               Rhat for assessing convergence of MCMC. arXiv preprint arXiv:1903.08008.
-  - `wormetal2009_californiacurrentsp.csv`: system, genus, and species information from the "California current" system extracted from the supplementary  
+  - `wormetal2009_californiacurrentsp.csv`: system, genus, and species information from the "California current" system extracted from the supplementary
      information of  Worm et al. 2009 (https://www.science.org/doi/10.1126/science.1173146) and used for our supplementary analyses. If you use these please cite
      the paper accordingly. 
-  - `wormetal2009_spdata.csv`: system, genus, and species information extracted from the supplementary  
-     information of  Worm et al. 2009 (https://www.science.org/doi/10.1126/science.1173146) and used for our supplementary analyses. If you use these please cite
+  - `wormetal2009_spdata.csv`: system, genus, and species information extracted from the supplementary information of  Worm et al. 2009 
+     (https://www.science.org/doi/10.1126/science.1173146) and used for our supplementary analyses. If you use these please cite
      the paper accordingly. 
 
 
