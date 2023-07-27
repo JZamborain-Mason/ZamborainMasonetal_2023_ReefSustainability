@@ -1,4 +1,5 @@
-# Zamborain-Masonetal_2023_ReefSustainability
+# Zamborain-Masonetal_2023_ReefSustainability [![DOI](https://zenodo.org/badge/185091977.svg)](https://zenodo.org/badge/latestdoi/185091977)
+
 This repository contains the code to implement the analyses from the manuscript titled "Sustainable reference points for multispecies coral reef fisheries" (Zamborain-Mason et al. 2023).
 This project 
 (i) estimates context-specific sustainable reference points multispecies reef fish assemblages based on environmental conditions 
